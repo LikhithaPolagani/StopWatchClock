@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch and Clock</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@tailwindcss/browser@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        #timeDisplay {
+            font-family: 'Courier New', Courier, monospace;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex justify-center items-center min-h-screen">
+    <div class="bg-white rounded-lg shadow-md p-6 w-full max-w-md transition-transform hover:scale-105">
+        <h1 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Stopwatch & Clock</h1>
+        <div id="timeDisplay" class="text-3xl font-bold text-center text-gray-800 mb-4">00:00:00</div>
+        <div class="flex justify-center space-x-4 mb-4">
+            <button id="startStopButton" class="bg-blue-500 hover:bg-blue-700 text-white font-semibold rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-colors">Start</button>
+            <button id="resetButton" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold rounded-md py-2 px-4 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors">Reset</button>
+        </div>
+        <div class="text-center text-sm text-gray-500">
+            <p>Current Time:</p>
+            <p id="currentTimeDisplay" class="font-mono">00:00:00</p>
+        </div>
+    </div>
+
+    <script>
+        let stopwatchInterval;
+        let stopwatchRunning = false;
+        let seconds = 0;
+        let minutes = 0;
+        let hours = 0;
+
+        let clockInterval;
+
+        const timeDisplay = document.getElementById('timeDisplay');
+        const startStopButton = document.getElementById('startStopButton');
+        const resetButton = document.getElementById('resetButton');
+        const currentTimeDisplay = document.getElementById('currentTimeDisplay');
+
+        function updateTimeDisplay() {
+            const formattedSeconds = seconds.toString().padStart(2, '0');
+            const formattedMinutes = minutes.toString().padStart(2, '0');
+            const formattedHours = hours.toString().padStart(2, '0');
+            timeDisplay.textContent = `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+        }
+
+        function startStopwatch() {
+            if (stopwatchRunning) {
+                clearInterval(stopwatchInterval);
+                startStopButton.textContent = 'Start';
+                stopwatchRunning = false;
+            } else {
+                stopwatchInterval = setInterval(() => {
+                    seconds++;
+                    if (seconds === 60) {
+                        seconds = 0;
+                        minutes++;
+                        if (minutes === 60) {
+                            minutes = 0;
+                            hours++;
+                        }
+                    }
+                    updateTimeDisplay();
+                }, 1000);
+                startStopButton.textContent = 'Stop';
+                stopwatchRunning = true;
+            }
+        }
+
+        function resetStopwatch() {
+            clearInterval(stopwatchInterval);
+            seconds = 0;
+            minutes = 0;
+            hours = 0;
+            updateTimeDisplay();
+            startStopButton.textContent = 'Start';
+            stopwatchRunning = false;
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const currentHours = now.getHours();
+            const currentMinutes = now.getMinutes();
+            const currentSeconds = now.getSeconds();
+
+            const formattedCurrentHours = currentHours.toString().padStart(2, '0');
+            const formattedCurrentMinutes = currentMinutes.toString().padStart(2, '0');
+            const formattedCurrentSeconds = currentSeconds.toString().padStart(2, '0');
+            currentTimeDisplay.textContent = `${formattedCurrentHours}:${formattedCurrentMinutes}:${formattedCurrentSeconds}`;
+        }
+
+        startStopButton.addEventListener('click', startStopwatch);
+        resetButton.addEventListener('click', resetStopwatch);
+
+        updateClock();
+        clockInterval = setInterval(updateClock, 1000);
+    </script>
+</body>
+</html>
